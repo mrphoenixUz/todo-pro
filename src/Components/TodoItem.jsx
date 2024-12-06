@@ -1,31 +1,30 @@
 import { useState } from "react";
 
 const TodoItem = ({ todo, onDelete, onEdit, onComplete }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
 
-  const handleSave = () => {
+  const handleEditSave = () => {
     if (!editedTitle.trim()) return;
     onEdit(todo.id, editedTitle);
-    setIsModalOpen(false);
+    setIsEditModalOpen(false);
   };
 
   return (
     <div
-      className={`flex justify-between items-center p-3 border-b ${
-        todo.completed ? "bg-green-100" : "bg-white"
-      }`}
+      className={`flex justify-between items-center p-3 border-b ${todo.completed ? "bg-green-100" : "bg-white"
+        }`}
     >
       <span
-        className={`flex-grow break-words ${
-          todo.completed ? "line-through text-gray-500" : ""
-        }`}
+        className={`flex-grow break-words ${todo.completed ? "line-through text-gray-500" : ""
+          }`}
       >
         {todo.title}
       </span>
       <div className="flex gap-2">
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => setIsEditModalOpen(true)}
           className="text-yellow-500 hover:text-yellow-600"
         >
           ✏️
@@ -37,16 +36,21 @@ const TodoItem = ({ todo, onDelete, onEdit, onComplete }) => {
           ✅
         </button>
         <button
-          onClick={onDelete}
+          onClick={() => setIsDeleteModalOpen(true)}
           className="text-red-500 hover:text-red-600"
         >
           ❌
         </button>
       </div>
 
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+      {/* Edit Modal Start */}
+      {isEditModalOpen && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleEditSave();
+          }}
+          className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
           <div className="bg-white shadow-lg p-4 rounded-md w-96">
             <h3 className="mb-3 font-bold text-lg">Edit Todo</h3>
             <input
@@ -58,21 +62,51 @@ const TodoItem = ({ todo, onDelete, onEdit, onComplete }) => {
             />
             <div className="flex justify-end gap-3 mt-4">
               <button
-                onClick={() => setIsModalOpen(false)}
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
                 className="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-md text-white"
               >
                 Cancel
               </button>
               <button
-                onClick={handleSave}
+                type="submit"
+                // onClick={handleEditSave}
                 className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md text-white"
               >
                 Save
               </button>
             </div>
           </div>
+        </form>
+      )}
+      {/* Edit Modal End */}
+
+      {/* Delete Confirmation Modal Start */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+          <div className="bg-white shadow-lg p-4 rounded-md w-96">
+            <h3 className="mb-4 font-bold text-lg">Are you sure?</h3>
+            <p className="mb-4 text-gray-600">
+              Do you really want to delete this task?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-md text-white"
+              >
+                No
+              </button>
+              <button
+                onClick={onDelete}
+                className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-white"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
         </div>
       )}
+      {/* Delete Confirmation Modal End */}
     </div>
   );
 };
