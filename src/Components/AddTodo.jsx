@@ -6,7 +6,7 @@ const AddTodo = ({ onAdd }) => {
 
   const handleAdd = () => {
     if (!todoTitle.trim()) {
-      toast.warn("Todo title cannot be empty!", {
+      toast.info("Todo title cannot be empty!", {
         position: "top-center",
       });
       return;
@@ -16,12 +16,12 @@ const AddTodo = ({ onAdd }) => {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <form typeof="submit" className="flex items-center gap-2" onSubmit={(e) => {e.preventDefault()} }>
       <input
         type="text"
         value={todoTitle}
         onChange={(e) => setTodoTitle(e.target.value)}
-        className="flex-grow shadow-sm p-2 border rounded-md"
+        className="flex-grow shadow-sm p-2 border after:border-none rounded-md w-fit"
         placeholder="Enter your todo..."
       />
       <button
@@ -30,7 +30,7 @@ const AddTodo = ({ onAdd }) => {
       >
         Add Todo
       </button>
-    </div>
+    </form>
   );
 };
 

@@ -1,13 +1,13 @@
 import { useState } from "react";
 
 const TodoItem = ({ todo, onDelete, onEdit, onComplete }) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
 
-  const handleEdit = () => {
+  const handleSave = () => {
     if (!editedTitle.trim()) return;
     onEdit(todo.id, editedTitle);
-    setIsEditing(false);
+    setIsModalOpen(false);
   };
 
   return (
@@ -16,29 +16,16 @@ const TodoItem = ({ todo, onDelete, onEdit, onComplete }) => {
         todo.completed ? "bg-green-100" : "bg-white"
       }`}
     >
-      {isEditing ? (
-        <input
-          type="text"
-          value={editedTitle}
-          onChange={(e) => setEditedTitle(e.target.value)}
-          onBlur={handleEdit}
-          onKeyDown={(e) => e.key === "Enter" && handleEdit()}
-          className="flex-grow shadow-sm p-2 border rounded-md"
-          autoFocus
-        />
-      ) : (
-        <span
-          className={`flex-grow ${
-            todo.completed ? "line-through text-gray-500" : ""
-          }`}
-          onClick={() => setIsEditing(true)}
-        >
-          {todo.title}
-        </span>
-      )}
+      <span
+        className={`flex-grow break-words ${
+          todo.completed ? "line-through text-gray-500" : ""
+        }`}
+      >
+        {todo.title}
+      </span>
       <div className="flex gap-2">
         <button
-          onClick={() => setIsEditing(true)}
+          onClick={() => setIsModalOpen(true)}
           className="text-yellow-500 hover:text-yellow-600"
         >
           ✏️
@@ -56,6 +43,36 @@ const TodoItem = ({ todo, onDelete, onEdit, onComplete }) => {
           ❌
         </button>
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+          <div className="bg-white shadow-lg p-4 rounded-md w-96">
+            <h3 className="mb-3 font-bold text-lg">Edit Todo</h3>
+            <input
+              type="text"
+              value={editedTitle}
+              onChange={(e) => setEditedTitle(e.target.value)}
+              className="p-2 border rounded-md w-full"
+              autoFocus
+            />
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-md text-white"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md text-white"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
